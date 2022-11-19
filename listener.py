@@ -1,6 +1,8 @@
 import streamlit as st
 import aiohttp
 import asyncio
+import pandas as pd
+import csv
 
 API_KEY = "52f6ef1c-a919-490c-8d25-ccebe7a5947b"
 
@@ -29,10 +31,9 @@ async def main():
                 st.write("Result")
                 data = await fetch(session, f"https://api.helius.xyz/v0/addresses/{address}/{target}?api-key={API_KEY}")
                 if data:
-                    st.write(data)
+                    st.table(data)
                 else:
                     st.error("Error")
-
 
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
