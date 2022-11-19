@@ -17,19 +17,19 @@ async def main():
     st.set_page_config(page_title="heliusListener", page_icon="🤖")
     st.title("Helius Listener")
     async with aiohttp.ClientSession() as session:
+
         with st.form("my_form"):
-            # index = st.number_input("ID", min_value=0, max_value=100, key="index")
             address = st.text_input("Wallet Address")
+            list_query_option = ['nft-events','nfts','transactions', 'raw-transactions','names','balances']
+            target = st.selectbox("Query Options", list_query_option)
 
             submitted = st.form_submit_button("Submit")
 
             if submitted:
                 st.write("Result")
-                data = await fetch(session, f"https://api.helius.xyz/v0/addresses/{address}/transactions?api-key={API_KEY}")
+                data = await fetch(session, f"https://api.helius.xyz/v0/addresses/{address}/{target}?api-key={API_KEY}")
                 if data:
-                    print(data)
                     st.write(data)
-                    # st.image(data['download_url'], caption=f"Author: {data['author']}")
                 else:
                     st.error("Error")
 
