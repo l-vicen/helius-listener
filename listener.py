@@ -31,7 +31,8 @@ async def main():
                 st.write("Result")
                 data = await fetch(session, f"https://api.helius.xyz/v0/addresses/{address}/{target}?api-key={API_KEY}")
                 if data:
-                    st.table(data)
+                    st.table(data) # For table representation
+                    st.write(data) # For dict representation
                 else:
                     st.error("Error")
 
