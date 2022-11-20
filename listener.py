@@ -10,15 +10,24 @@ def normalizeWebHookDataConnection(data):
 
     # Parsing Helius Queried Data
     timestamps = [data[i]["timestamp"] for i in range(len(data))]
+    # st.success("Successfuly queried Timestamps")
+
     fromUsersAccounts = [data[i]["nativeTransfers"][0]["fromUserAccount"] for i in range(len(data))]
+    # st.success("Successfuly queried fromUsersAccounts")
+
     toUsersAccounts = [data[i]["nativeTransfers"][0]["toUserAccount"] for i in range(len(data))]
+    # st.success("Successfuly queried toUsersAccounts")
+    
     amounts = [data[i]["nativeTransfers"][0]["amount"] for i in range(len(data))]
+    # st.success("Successfuly queried amounts")
 
     # Getting Native Balance Moves (+ or -)
     nativeBalanceChange = []
     for i in range(len(data)):
         balancePayerReciever = (data[i]["accountData"][0]["nativeBalanceChange"], data[i]["accountData"][1]["nativeBalanceChange"])
         nativeBalanceChange.append(balancePayerReciever)
+    
+    # st.success("Successfuly queried nativeBalanceChange")
     
     # Identifying Solana Payment Transactions from normal transactions
     paySolanaIdentifications = []
@@ -34,31 +43,42 @@ def normalizeWebHookDataConnection(data):
         if isSolPayTransaction == False:
             paySolanaIdentifications.append("NOT_SOLANA_PAY_TRANSACTION")
 
+    # st.success("Successfuly queried paySolanaIdentifications")
+
     # Building Product Bundle
     productsBundle = []
     for i in range(len(data)):
         productPurchase = False
+        bundle = []
         for j in range(len(data[i]["accountData"])):
             if data[i]["accountData"][j]["account"] == "3V7ZHQoouyJ8NuTfzdcQExF3QvXRSwxabdrxv1x5RFpW": # BANANA IDENTIFIER
-                productsBundle.append(data[i]["accountData"][j]["account"])
+                bundle.append(data[i]["accountData"][j]["account"])
                 productPurchase = True
-            elif data[i]["accountData"][j]["account"] == "ADsyD7QSXpTPBDzJFq4geAFnEPD1NrCKExqseeMDYBbh": # APPLE IDENTIFIER
-                productsBundle.append(data[i]["accountData"][j]["account"])
+                continue
+            if data[i]["accountData"][j]["account"] == "ADsyD7QSXpTPBDzJFq4geAFnEPD1NrCKExqseeMDYBbh": # APPLE IDENTIFIER
+                bundle.append(data[i]["accountData"][j]["account"])
                 productPurchase = True
-            elif data[i]["accountData"][j]["account"] == "DCVTCuAs3VuzxoUQAV5hHaXbnuB7xdXsnXjv1xUoWTa3": # BEER IDENTIFIER
-                productsBundle.append(data[i]["accountData"][j]["account"])
+                continue
+            if data[i]["accountData"][j]["account"] == "DCVTCuAs3VuzxoUQAV5hHaXbnuB7xdXsnXjv1xUoWTa3": # BEER IDENTIFIER
+                bundle.append(data[i]["accountData"][j]["account"])
                 productPurchase = True
-            elif data[i]["accountData"][j]["account"] == "5Gwy6Ga6461DDHfb6kLMKP7GpCLCMWWBggwjrKfeenNo": # PRETZEL IDENTIFIER
-                productsBundle.append(data[i]["accountData"][j]["account"])
+                continue
+            if data[i]["accountData"][j]["account"] == "5Gwy6Ga6461DDHfb6kLMKP7GpCLCMWWBggwjrKfeenNo": # PRETZEL IDENTIFIER
+                bundle.append(data[i]["accountData"][j]["account"])
                 productPurchase = True
-            elif data[i]["accountData"][j]["account"] == "YPDGKRbLAihKdkNGyz4R3CP8HYohBByfQSWnSiUEJHU": # CHEESE IDENTIFIER
-                productsBundle.append(data[i]["accountData"][j]["account"])
+                continue
+            if data[i]["accountData"][j]["account"] == "YPDGKRbLAihKdkNGyz4R3CP8HYohBByfQSWnSiUEJHU": # CHEESE IDENTIFIER
+                bundle.append(data[i]["accountData"][j]["account"])
                 productPurchase = True
-            else:
                 continue
 
         if productPurchase == False:
-            productsBundle.append("NO_PRODUCT_PURCHASE")
+            productsBundle.append(["NO_PRODUCT_PURCHASE"])
+        else:
+            productsBundle.append(bundle)
+
+    # st.write(productsBundle)
+    # st.success("Successfuly queried productsBundle")
     
     d = {'Payer':fromUsersAccounts,
         'Receiver':toUsersAccounts,

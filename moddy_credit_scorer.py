@@ -41,7 +41,7 @@ def derivingVariableX(unique_addresses, amount_history):
     # st.write("VarPreTunning")
     # st.write(varX_preTunning)
 
-    variable_x = [(1 / varX) for varX in varX_preTunning]
+    variable_x = [(1 / varX) if varX != 0.0 else 0.0 for varX in varX_preTunning]
     st.write("varX_tunned")
     st.write(variable_x)
     return variable_x
