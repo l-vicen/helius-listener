@@ -1,27 +1,51 @@
 # Dependencies
 import streamlit as st
 import pandas as pd
+
+from google.oauth2 import service_account
 from gsheetsdb import connect
 import gspread
 
-DB_TARGET_URL = "https://docs.google.com/spreadsheets/d/1TscPz0hQe8PbnS3gfssrYM21K_n4N1RR4kxAnWHjodc/edit?usp=sharing"
+# Create a connection object.
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"],
+    scopes=[
+        "https://www.googleapis.com/auth/spreadsheets",
+    ],
+)
+conn = connect(credentials=credentials)
 
-def getDataFromDataBase():
-    conn = connect()
-    rows = conn.execute(f'SELECT * FROM "{DB_TARGET_URL}"')
+# Perform SQL query on the Google Sheet.
+# Uses st.cache to only rerun when the query changes or after 10 min.
+@st.cache(ttl=600)
+def run_query(query):
+    rows = conn.execute(query, headers=1)
+    rows = rows.fetchall()
+    return rows
+
+def getDataSOL():
+    sheet_url = st.secrets["private_gsheets_url"]
+    rows = run_query(f'SELECT * FROM "{sheet_url}"')
     df_gsheet = pd.DataFrame(rows)
     st.table(df_gsheet)
+    return df_gsheet
 
-def postDataToDataBase(payers, receivers):
+def getDataSheetCS():
+    pass
 
+def postDataSOL(dataframe):
+    pass
+  
+def postDataCS(dataframe):
     sa = gspread.service_account("credentials.json")
-    sh = sa.open("SOL")
-    worksheet = sh.get_worksheet(0)
+    sh = sa.open("hackaTUM")
+    worksheetCS = sh.get_worksheet(1)
+    worksheetCS.update([dataframe.columns.values.tolist()] + dataframe.values.tolist())
 
-    l = len(worksheet.col_values(1))+1
+def postDataMA(dataframe):
+    pass
 
-    worksheet.update_cell(l, 1, ["Lucas", "Kirill"])
-    worksheet.update_cell(l, 2, ["Yulan", "Kirill"])
+    
 
 
     

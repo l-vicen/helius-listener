@@ -6,14 +6,15 @@ import pandas as pd
 import moddy_credit_scorer as moddy
 import db as db
 
+st.set_page_config(
+    page_title="heliusListener", 
+    page_icon="🤖"
+ )
+
+
 API_KEY = "52f6ef1c-a919-490c-8d25-ccebe7a5947b"
 
-db.getDataFromDataBase()
-db.postDataToDataBase()
-db.getDataFromDataBase()
-
 def normalizeWebHookDataConnection(data):
-
     # Parsing Helius Queried Data
     timestamps = [data[i]["timestamp"] for i in range(len(data))]
     # st.success("Successfuly queried Timestamps")
@@ -106,9 +107,8 @@ async def fetch(session, url):
         return {}
 
 async def main():
-    st.set_page_config(page_title="heliusListener", page_icon="🤖")
     st.title("Helius Listener")
-
+    
     async with aiohttp.ClientSession() as session:
 
         with st.form("my_form"):
@@ -124,12 +124,12 @@ async def main():
                 if data:
 
                     # st.write(data)
-
-                    # Parsing data retrieved from Helius
+                    # # Parsing data retrieved from Helius
                     dataframe = normalizeWebHookDataConnection(data)
 
                     # Getting the Native Balances of each Address
                     unique_addresses = moddy.getUniqueAddresses(dataframe)
+                    # st.write(unique_addresses)
 
                     balance_unique_addresses = []
                     for i in range(len(unique_addresses)):
@@ -153,10 +153,11 @@ async def main():
 
                     zs = moddy.derivingVariableZ(dataframe)
                     # Calculating Credit Score for every unique wallet
-                    score_vector = moddy.calculateCreditScore(xs, ys, zs)
+                    cs_df = moddy.calculateCreditScore(xs, ys, zs, unique_addresses)
+                    db.postDataCS(cs_df) # Creating the DB
 
-                    st.title("Credit Scores")
-                    st.write(score_vector)
+                    st.title("Data Frame with Credit Scores")
+                    st.write(cs_df)
 
                 else:
                     st.error("Error")
