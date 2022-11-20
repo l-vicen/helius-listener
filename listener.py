@@ -26,7 +26,6 @@ def normalizeWebHookDataConnection(data):
     for i in range(len(data)):
         balancePayerReciever = (data[i]["accountData"][0]["nativeBalanceChange"], data[i]["accountData"][1]["nativeBalanceChange"])
         nativeBalanceChange.append(balancePayerReciever)
-    
     # st.success("Successfuly queried nativeBalanceChange")
     
     # Identifying Solana Payment Transactions from normal transactions
@@ -129,8 +128,9 @@ async def main():
                     for i in range(len(unique_addresses)):
                         data = await fetch(session, f"https://api.helius.xyz/v0/addresses/{unique_addresses[i]}/balances?api-key={API_KEY}")
                         balance_unique_addresses.append(data["nativeBalance"])
-                    st.write("Balances")
-                    st.write(balance_unique_addresses)
+                    
+                    # st.write("Balances")
+                    # st.write(balance_unique_addresses)
 
                     # Getting the transaction history amount
                     amount_history = moddy.getTransactionAmountHistory(dataframe, unique_addresses)
