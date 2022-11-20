@@ -14,6 +14,7 @@ st.set_page_config(
 API_KEY = "52f6ef1c-a919-490c-8d25-ccebe7a5947b"
 
 def normalizeWebHookDataConnection(data):
+
     # Parsing Helius Queried Data
     timestamps = [data[i]["timestamp"] for i in range(len(data))]
     # st.success("Successfuly queried Timestamps")
@@ -95,8 +96,6 @@ def normalizeWebHookDataConnection(data):
 
     df_parsed = pd.DataFrame.from_dict(d)
     st.table(df_parsed)
-    
-    db.postDataSOL(df_parsed)
     return df_parsed
 
 async def fetch(session, url):
@@ -157,14 +156,16 @@ async def main():
                     zs = moody.derivingVariableZ(dataframe)
                     # Calculating Credit Score for every unique wallet
                     cs_df = moody.calculateCreditScore(xs, ys, zs, unique_addresses)
-                    db.postDataCS(cs_df) # Creating the DB
+                    db.postDataCS(cs_df) # Creating the DB & Feeding it
 
                     st.write('---')
-                    st.markdown("### Data Frame with Credit Scores")
+                    st.markdown("### < Wallet | Credit Scores >")
+                    st.info("Due to low volume of transaction & wallets the credit score algorithm sets all CF to 0. \n It is still worthwhile to have a look on the incentives of the algorithm, either by reading the doc or talking to us!")
                     st.write(cs_df)
 
                 else:
                     st.error("Error")
+                    st.warning("No activity of this query type was found for this wallet. Change the wallet or the query request!")
 
 if __name__ == '__main__':
     loop = asyncio.new_event_loop()
