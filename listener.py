@@ -115,7 +115,7 @@ async def main():
 
         with st.form("my_form"):
             address = st.text_input("Wallet Address")
-            list_query_option = ['nft-events','nfts','transactions', 'raw-transactions','names','balances']
+            list_query_option = ['nft-events','transactions']
             target = st.selectbox("Query Options", list_query_option)
 
             submitted = st.form_submit_button("Submit")
