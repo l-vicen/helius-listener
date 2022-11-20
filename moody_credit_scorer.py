@@ -64,7 +64,7 @@ def derivingVariableY(dataframe, balances, unique_addresses, beforeAndAfterNativ
     # st.write(transactions_per_payer)
 
     addresses = dataframe["Payer"].values.tolist()
-    tuple_changes = dataframe["(Payer | Receiver)"].values.tolist()
+    tuple_changes = dataframe["Native_Balance_Change"].values.tolist()
 
     payouts = []
     for k in range(len(balances)):

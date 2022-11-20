@@ -3,14 +3,13 @@ import aiohttp
 import asyncio
 import pandas as pd
 
-import moddy_credit_scorer as moddy
+import moody_credit_scorer as moody
 import db as db
 
 st.set_page_config(
     page_title="heliusListener", 
     page_icon="🤖"
  )
-
 
 API_KEY = "52f6ef1c-a919-490c-8d25-ccebe7a5947b"
 
@@ -90,12 +89,14 @@ def normalizeWebHookDataConnection(data):
         'Receiver':toUsersAccounts,
         'Date':timestamps,
         'Amount':amounts,
-        '(Payer | Receiver)': nativeBalanceChange,
-        'Solana-Payment':paySolanaIdentifications, 
+        'Native_Balance_Change': nativeBalanceChange,
+        'Solana_Payment':paySolanaIdentifications, 
         'Products':productsBundle}
 
     df_parsed = pd.DataFrame.from_dict(d)
     st.table(df_parsed)
+    
+    db.postDataSOL(df_parsed)
     return df_parsed
 
 async def fetch(session, url):
@@ -109,6 +110,7 @@ async def fetch(session, url):
 async def main():
 
     st.markdown("# Helius Listener")
+    st.info("This tool was created to facilitate the prototyping of our Credit Scorer project. As our solution is to some extent serverless. We built this tool to communicate with the WebHooks provided by Helius.\n The Helius Listener Project does not have a robust UI iteration yet, however if the user uncomment some st.write() statements in the source he will see the logic behind this tool. \n The tool is responsible for: \n- (1) Communicating with Helius;  \n- (2) Parsing Helius data; \n- (3) Apply the Credit Score Algorithm (mooddy_credit_scorer.py) is crucial nonetheless; \n- (4) Feed Data to DB @GoogleAPI&Sheet;")
     
     async with aiohttp.ClientSession() as session:
 
@@ -129,7 +131,7 @@ async def main():
                     dataframe = normalizeWebHookDataConnection(data)
 
                     # Getting the Native Balances of each Address
-                    unique_addresses = moddy.getUniqueAddresses(dataframe)
+                    unique_addresses = moody.getUniqueAddresses(dataframe)
                     # st.write(unique_addresses)
 
                     balance_unique_addresses = []
@@ -141,20 +143,20 @@ async def main():
                     # st.write(balance_unique_addresses)
 
                     # Getting the transaction history amount
-                    amount_history = moddy.getTransactionAmountHistory(dataframe, unique_addresses)
+                    amount_history = moody.getTransactionAmountHistory(dataframe, unique_addresses)
 
                     # Calculating Variable X for Credit Score Model
-                    xs = moddy.derivingVariableX(unique_addresses, amount_history)
+                    xs = moody.derivingVariableX(unique_addresses, amount_history)
 
                     # Calculating Variable Y for Credit Score Model
 
-                    beforeAndAfterNativeBalances = dataframe["(Payer | Receiver)"].values.tolist()
+                    beforeAndAfterNativeBalances = dataframe["Native_Balance_Change"].values.tolist()
                     # st.write(beforeAndAfterNativeBalances)
-                    ys = moddy.derivingVariableY(dataframe, balance_unique_addresses, unique_addresses, beforeAndAfterNativeBalances)
+                    ys = moody.derivingVariableY(dataframe, balance_unique_addresses, unique_addresses, beforeAndAfterNativeBalances)
 
-                    zs = moddy.derivingVariableZ(dataframe)
+                    zs = moody.derivingVariableZ(dataframe)
                     # Calculating Credit Score for every unique wallet
-                    cs_df = moddy.calculateCreditScore(xs, ys, zs, unique_addresses)
+                    cs_df = moody.calculateCreditScore(xs, ys, zs, unique_addresses)
                     db.postDataCS(cs_df) # Creating the DB
 
                     st.write('---')

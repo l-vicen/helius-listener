@@ -23,18 +23,13 @@ def run_query(query):
     rows = rows.fetchall()
     return rows
 
-def getDataSOL():
-    sheet_url = st.secrets["private_gsheets_url"]
-    rows = run_query(f'SELECT * FROM "{sheet_url}"')
-    df_gsheet = pd.DataFrame(rows)
-    st.table(df_gsheet)
-    return df_gsheet
-
-def getDataSheetCS():
-    pass
-
+# Post / Writing Request to construct own DB at Google Sheets
 def postDataSOL(dataframe):
-    pass
+    sa = gspread.service_account("credentials.json")
+    sh = sa.open("hackaTUM")
+    worksheetSOL = sh.get_worksheet(0)
+    st.write(dataframe.values.tolist())
+    worksheetSOL.update([dataframe.columns.values.tolist()] + dataframe.values.tolist())
   
 def postDataCS(dataframe):
     sa = gspread.service_account("credentials.json")
@@ -42,8 +37,8 @@ def postDataCS(dataframe):
     worksheetCS = sh.get_worksheet(1)
     worksheetCS.update([dataframe.columns.values.tolist()] + dataframe.values.tolist())
 
-def postDataMA(dataframe):
-    pass
+# def postDataMA(dataframe):
+#     pass
 
     
 
