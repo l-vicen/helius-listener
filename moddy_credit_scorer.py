@@ -109,7 +109,10 @@ def derivingVariableZ(dataframe):
     # condition_one = [0 if l_timestamp_count[i] < 1 else i for i in l_timestamp_count]
 
     vector_variable_time = [ (time_right_now - first_activity) for first_activity in l_min_date_count]
-    variable_z = [1 if (time_right_now - latests_activity) > 90 else (np.square(vector_variable_time) / DIV_COEFF) for latests_activity in l_max_date_count]
+    variable_z_pre = [1 if (time_right_now - latests_activity) > 90 else (np.square(vector_variable_time) / DIV_COEFF) for latests_activity in l_max_date_count]
+    variable_z = [2.2 if z > 2.2 else z for z in variable_z_pre]
+    
+    
     return variable_z
 
 
