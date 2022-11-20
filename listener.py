@@ -1,8 +1,10 @@
 import streamlit as st
-import moddy_credit_scorer as moddy
 import aiohttp
 import asyncio
 import pandas as pd
+
+import moddy_credit_scorer as moddy
+import db as db
 
 API_KEY = "52f6ef1c-a919-490c-8d25-ccebe7a5947b"
 
@@ -102,6 +104,9 @@ async def fetch(session, url):
 async def main():
     st.set_page_config(page_title="heliusListener", page_icon="🤖")
     st.title("Helius Listener")
+
+    db.getDataFromDataBase()
+
     async with aiohttp.ClientSession() as session:
 
         with st.form("my_form"):
