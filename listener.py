@@ -8,6 +8,10 @@ import db as db
 
 API_KEY = "52f6ef1c-a919-490c-8d25-ccebe7a5947b"
 
+db.getDataFromDataBase()
+db.postDataToDataBase()
+db.getDataFromDataBase()
+
 def normalizeWebHookDataConnection(data):
 
     # Parsing Helius Queried Data
@@ -104,8 +108,6 @@ async def fetch(session, url):
 async def main():
     st.set_page_config(page_title="heliusListener", page_icon="🤖")
     st.title("Helius Listener")
-
-    db.getDataFromDataBase()
 
     async with aiohttp.ClientSession() as session:
 

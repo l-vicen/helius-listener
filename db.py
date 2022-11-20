@@ -12,8 +12,16 @@ def getDataFromDataBase():
     df_gsheet = pd.DataFrame(rows)
     st.table(df_gsheet)
 
-def postDataToDataBase():
-    pass
+def postDataToDataBase(payers, receivers):
+
+    sa = gspread.service_account("credentials.json")
+    sh = sa.open("SOL")
+    worksheet = sh.get_worksheet(0)
+
+    l = len(worksheet.col_values(1))+1
+
+    worksheet.update_cell(l, 1, ["Lucas", "Kirill"])
+    worksheet.update_cell(l, 2, ["Yulan", "Kirill"])
 
 
     
