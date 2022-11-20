@@ -159,7 +159,7 @@ async def main():
                     db.postDataCS(cs_df) # Creating the DB & Feeding it
 
                     st.write('---')
-                    st.markdown("### < Wallet | Credit Scores >")
+                    st.markdown("## Wallet & Credit Scores ")
                     st.info("Due to low volume of transaction & wallets the credit score algorithm sets all CF to 0. \n It is still worthwhile to have a look on the incentives of the algorithm, either by reading the doc or talking to us!")
                     st.write(cs_df)
 
