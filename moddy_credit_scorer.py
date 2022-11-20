@@ -38,9 +38,8 @@ def derivingVariableX(unique_addresses, amount_history):
     variance = []
     for i in range(len(unique_addresses)): 
         variance.append(np.var(amount_history[i]))
-
-    st.write("Variance of each Wallet")
-    st.write(variance)
+    # st.write("Variance of each Wallet")
+    # st.write(variance)
     
     # if the variance is equal or greater than 200, this wallet is then deemed to be too reckless,
     # therefore the function will return a value of 0
@@ -81,29 +80,29 @@ def derivingVariableY(dataframe, balances, unique_addresses, beforeAndAfterNativ
      
     # calculates the starting balance by subtracting previous payments from the current balance
     start_balance = np.subtract(balances, payouts)
-    st.write("Start Balances")
-    st.write(start_balance)
+    # st.write("Start Balances")
+    # st.write(start_balance)
 
     adj_vector = [x / y for x, y in zip(payouts, transactions_per_payer)]
-    st.write("Adjusted by number transactions")
-    st.write(adj_vector)
+    # st.write("Adjusted by number transactions")
+    # st.write(adj_vector)
 
     adj_vector_div_half = [x / 2 for x in adj_vector]
-    st.write("Scaling")
-    st.write(adj_vector_div_half)
+    # st.write("Scaling")
+    # st.write(adj_vector_div_half)
 
     trig_behavior = [((np.arctan(x) / (0.65)) + 0.05) for x in adj_vector_div_half]
-    st.write("Trigonometric Adjustment")
-    st.write(trig_behavior)
+    # st.write("Trigonometric Adjustment")
+    # st.write(trig_behavior)
 
     variable_y = [0 if element < 0 else element for element in trig_behavior]
     # st.write("Transformer")
     # st.write(variable_y)
     return variable_y
     
-    
     # The variable z is a multiplier based on the usage/time stamps of a given wallet
     # The range of z is from 1 to 2.2
+
 def derivingVariableZ(dataframe):
     timeStamp = dataframe.groupby('Payer')['Date'].apply(lambda x: list(np.unique(x))).reset_index(name="Timestamps")
     timeStamp["Count Timestamps"] = timeStamp["Timestamps"].str.len()

@@ -107,7 +107,8 @@ async def fetch(session, url):
         return {}
 
 async def main():
-    st.title("Helius Listener")
+
+    st.markdown("# Helius Listener")
     
     async with aiohttp.ClientSession() as session:
 
@@ -119,7 +120,7 @@ async def main():
             submitted = st.form_submit_button("Submit")
 
             if submitted:
-                st.write("Result")
+                st.markdown("## On-chain Results")
                 data = await fetch(session, f"https://api.helius.xyz/v0/addresses/{address}/{target}?api-key={API_KEY}")
                 if data:
 
@@ -156,7 +157,8 @@ async def main():
                     cs_df = moddy.calculateCreditScore(xs, ys, zs, unique_addresses)
                     db.postDataCS(cs_df) # Creating the DB
 
-                    st.title("Data Frame with Credit Scores")
+                    st.write('---')
+                    st.markdown("### Data Frame with Credit Scores")
                     st.write(cs_df)
 
                 else:
